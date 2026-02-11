@@ -69,7 +69,7 @@ class SystemStats(BaseModel):
 app_start_time = datetime.now(timezone.utc)
 
 def load_model():
-    global model, face_cascade, eye_cascade
+    global model
     try:
         if not MODEL_PATH.exists():
             logger.info("Downloading YOLOv8n model...")
@@ -79,62 +79,9 @@ def load_model():
             logger.info("Loading existing YOLOv8n model...")
             model = YOLO(str(MODEL_PATH))
         logger.info("Model loaded successfully")
-        
-        # Load face and eye cascade classifiers
-        face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
-        eye_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_eye.xml')
-        logger.info("Face detection classifiers loaded")
     except Exception as e:
         logger.error(f"Error loading model: {e}")
         model = YOLO('yolov8n.pt')
-
-def detect_face_attributes(img_array, person_bbox):
-    """Detect if person has face covered or wearing sunglasses"""
-    attributes = []
-    
-    try:
-        x1, y1, x2, y2 = [int(coord) for coord in person_bbox]
-        
-        # Ensure bbox is within image bounds
-        h, w = img_array.shape[:2]
-        x1, y1 = max(0, x1), max(0, y1)
-        x2, y2 = min(w, x2), min(h, y2)
-        
-        if x2 <= x1 or y2 <= y1:
-            return attributes
-            
-        # Extract person region
-        person_img = img_array[y1:y2, x1:x2]
-        
-        if person_img.size == 0:
-            return attributes
-        
-        # Convert to grayscale for face detection
-        gray = cv2.cvtColor(person_img, cv2.COLOR_RGB2GRAY)
-        
-        # Detect faces in person region
-        faces = face_cascade.detectMultiScale(gray, 1.3, 5)
-        
-        if len(faces) == 0:
-            # No face detected - likely face is covered
-            attributes.append("FACE_COVERED")
-        else:
-            # Face detected, check for eyes
-            for (fx, fy, fw, fh) in faces:
-                face_roi_gray = gray[fy:fy+fh, fx:fx+fw]
-                eyes = eye_cascade.detectMultiScale(face_roi_gray, 1.1, 3)
-                
-                if len(eyes) == 0:
-                    # Face visible but no eyes detected - likely wearing sunglasses or face partially covered
-                    attributes.append("SUNGLASSES")
-                elif len(eyes) < 2:
-                    # Only one eye detected - partially covered
-                    attributes.append("PARTIAL_COVER")
-    
-    except Exception as e:
-        logger.error(f"Error detecting face attributes: {e}")
-    
-    return attributes
 
 load_model()
 
