@@ -86,6 +86,7 @@ export default function VideoFeed({ isActive, setIsActive, onDetection, setFps }
         const result = await response.json();
         drawDetections(result.detections);
         setHasWeapon(result.has_weapon);
+        setSuspiciousPerson(result.suspicious_person || false);
         
         if (result.detections.length > 0) {
           onDetection(result);
