@@ -134,19 +134,10 @@ export default function VideoFeed({ isActive, setIsActive, onDetection, setFps }
       ctx.fillRect(x1, y1, width, height);
       ctx.globalAlpha = 1;
       
-      // Build label with attributes
-      let label = `${detection.class_name} ${Math.round(detection.confidence * 100)}%`;
-      if (detection.attributes && detection.attributes.length > 0) {
-        const attrText = detection.attributes.map(attr => {
-          if (attr === 'FACE_COVERED') return 'Face Covered';
-          if (attr === 'SUNGLASSES') return 'Sunglasses';
-          if (attr === 'PARTIAL_COVER') return 'Partial Cover';
-          return attr;
-        }).join(', ');
-        label += ` [${attrText}]`;
-      }
+      // Build label
+      const label = `${detection.class_name} ${Math.round(detection.confidence * 100)}%`;
       
-      ctx.font = 'bold 14px JetBrains Mono';
+      ctx.font = 'bold 16px JetBrains Mono';
       const textWidth = ctx.measureText(label).width;
       
       ctx.fillStyle = color;
