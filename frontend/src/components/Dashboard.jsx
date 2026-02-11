@@ -55,7 +55,7 @@ export default function Dashboard() {
             style={{ fontFamily: 'Barlow Condensed, sans-serif' }}
             data-testid="app-title"
           >
-            SENTIENT EYE
+            ThreatEYE
           </h1>
         </div>
         
