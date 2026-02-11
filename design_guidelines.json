@@ -1,0 +1,166 @@
+{
+  "project_name": "Sentient_Eye_Weapon_Detection",
+  "identity": {
+    "persona": "E1 - The Anti-AI Designer",
+    "tone": "Tactical, High-Precision, Alert, Industrial-Futurism",
+    "core_philosophy": "Fusion over Imitation. Function is Beauty. Dark Mode is Mandatory."
+  },
+  "visual_language": {
+    "theme": "dark",
+    "archetype": "The Performance Pro (Elite Athleticism & Precision)",
+    "colors": {
+      "background": {
+        "base": "#050505",
+        "surface": "#0f0f11",
+        "surface_highlight": "#18181b",
+        "overlay": "rgba(5, 5, 5, 0.8)"
+      },
+      "text": {
+        "primary": "#fafafa",
+        "secondary": "#a1a1aa",
+        "muted": "#52525b"
+      },
+      "accent": {
+        "primary": "#FF3B30",
+        "secondary": "#007AFF",
+        "tertiary": "#34C759",
+        "warning": "#FF9500"
+      },
+      "border": {
+        "default": "#27272a",
+        "active": "#52525b",
+        "alert": "#7f1d1d"
+      },
+      "semantic": {
+        "danger_glow": "0 0 20px rgba(255, 59, 48, 0.5)",
+        "safe_glow": "0 0 20px rgba(52, 199, 89, 0.3)",
+        "system_glow": "0 0 15px rgba(0, 122, 255, 0.2)"
+      }
+    },
+    "typography": {
+      "headings": {
+        "font_family": "Barlow Condensed, sans-serif",
+        "weights": ["600", "700"],
+        "letter_spacing": "tracking-tight",
+        "transform": "uppercase"
+      },
+      "body": {
+        "font_family": "Inter, sans-serif",
+        "weights": ["400", "500"]
+      },
+      "data": {
+        "font_family": "JetBrains Mono, monospace",
+        "weights": ["400", "500"],
+        "size": "text-xs md:text-sm"
+      }
+    },
+    "spacing": {
+      "scale": "Generous (2x standard)",
+      "container_padding": "p-6 md:p-8",
+      "grid_gap": "gap-6"
+    },
+    "borders": {
+      "radius": "rounded-none md:rounded-sm",
+      "style": "1px solid",
+      "special": "Corner accents (reticle style) on video feeds"
+    },
+    "effects": {
+      "glassmorphism": "backdrop-blur-xl bg-black/60 border border-white/10",
+      "scanlines": "linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.2))",
+      "reticle_animation": "pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite"
+    }
+  },
+  "layout_strategy": {
+    "grid_system": "Mode B: High Density Grid (Dashboard)",
+    "structure": [
+      {
+        "area": "Header",
+        "description": "Minimalist top bar. Left: System Name (Tactical Font). Right: Status Indicators (CPU, FPS, Mode). Glassmorphism.",
+        "classes": "fixed top-0 w-full z-50 h-16 border-b border-white/10 flex items-center justify-between px-6 glass"
+      },
+      {
+        "area": "Main Grid",
+        "description": "Bento Grid layout. Video Feed is dominant. Stats and Logs are auxiliary.",
+        "classes": "grid grid-cols-1 lg:grid-cols-12 gap-6 p-6 pt-24 h-screen overflow-hidden",
+        "children": [
+          {
+            "component": "VideoFeed",
+            "span": "col-span-1 lg:col-span-9 row-span-2 relative border border-white/10 bg-surface",
+            "notes": "Must have 'Corner Brackets' svg overlays. Red border flash on detection."
+          },
+          {
+            "component": "AlertPanel",
+            "span": "col-span-1 lg:col-span-3 row-span-1 h-full border border-white/10 bg-surface flex flex-col",
+            "notes": "Scrollable list of recent detections. High contrast timestamps."
+          },
+          {
+            "component": "StatsPanel",
+            "span": "col-span-1 lg:col-span-3 row-span-1 h-full border border-white/10 bg-surface",
+            "notes": "Donut charts or Bar charts for 'Weapon Count', 'Accuracy', 'Uptime'."
+          }
+        ]
+      }
+    ]
+  },
+  "components": {
+    "VideoFeed": {
+      "path": "src/components/VideoFeed.jsx",
+      "style": "Relative container. Video element fills container. Canvas overlay for Bounding Boxes.",
+      "bounding_box": {
+        "gun": "border-2 border-red-500 bg-red-500/20 text-red-500",
+        "knife": "border-2 border-orange-500 bg-orange-500/20 text-orange-500",
+        "person": "border-1 border-blue-500/50 text-blue-500 text-xs"
+      }
+    },
+    "AlertItem": {
+      "path": "src/components/AlertItem.jsx",
+      "style": "Flex row. Left: Icon (AlertTriangle). Middle: Text (Type + Confidence). Right: Time.",
+      "variants": {
+        "critical": "bg-red-950/30 border-l-2 border-red-500 text-red-200",
+        "warning": "bg-orange-950/30 border-l-2 border-orange-500 text-orange-200",
+        "info": "bg-blue-950/30 border-l-2 border-blue-500 text-blue-200"
+      }
+    },
+    "StatCard": {
+      "path": "src/components/StatCard.jsx",
+      "style": "p-4 flex flex-col gap-2. Label: Uppercase tracking-widest text-muted text-xs. Value: text-3xl font-mono text-white."
+    },
+    "ControlBar": {
+      "style": "Fixed bottom or overlay on video. Pill shaped or rectangular technical bar.",
+      "buttons": "h-10 px-6 font-mono text-sm uppercase tracking-wider border border-white/20 hover:bg-white/10 active:scale-95 transition-all"
+    }
+  },
+  "assets": {
+    "icons": {
+      "library": "lucide-react",
+      "mapping": {
+        "alert": "Siren",
+        "gun": "Crosshair",
+        "knife": "Sword",
+        "log": "ScrollText",
+        "camera": "Camera",
+        "settings": "Settings",
+        "activity": "Activity"
+      }
+    },
+    "fonts": {
+      "imports": [
+        "https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700&family=JetBrains+Mono:wght@400;500&family=Inter:wght@400;500&display=swap"
+      ]
+    }
+  },
+  "universal_guidelines": {
+    "accessibility": "Ensure high contrast for alerts. Use texture (stripe patterns) for color-blind friendly bounding boxes.",
+    "motion": "Use smooth transitions for hover states. Use 'animate-pulse' for active critical alerts.",
+    "interaction": "Buttons must have active states. Hovering over a log item should highlight the timestamp.",
+    "code_structure": "Use Functional Components with Hooks. Use Tailwind for all styling. No external CSS files for components."
+  },
+  "instructions_to_main_agent": {
+    "step_1": "Install dependencies: `npm install lucide-react recharts framer-motion clsx tailwind-merge`.",
+    "step_2": "Update `index.css` with the font imports and base theme colors.",
+    "step_3": "Create the `components/ui` folder for reusable Shadcn-like primitives (Button, Card, Badge) but styled manually with Tailwind if shadcn is not pre-installed.",
+    "step_4": "Implement the `VideoFeed` component first as it is the core feature. Mock the webcam feed if hardware is unavailable, but write code for `navigator.mediaDevices.getUserMedia`.",
+    "step_5": "Build the `Dashboard` layout using the Grid strategy.",
+    "step_6": "Connect the WebSocket or API polling for detection data."
+  }
+}
