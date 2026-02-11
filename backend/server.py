@@ -203,6 +203,7 @@ async def detect_weapons(request: DetectionRequest):
             detections=detections,
             total_count=len(detections),
             has_weapon=has_weapon,
+            suspicious_person=suspicious_person,
             timestamp=detection_doc['timestamp']
         )
     
