@@ -10,6 +10,7 @@ export default function VideoFeed({ isActive, setIsActive, onDetection, setFps }
   const detectionIntervalRef = useRef(null);
   const [error, setError] = useState(null);
   const [hasWeapon, setHasWeapon] = useState(false);
+  const [suspiciousPerson, setSuspiciousPerson] = useState(false);
   const lastFrameTimeRef = useRef(Date.now());
 
   const startCamera = async () => {
