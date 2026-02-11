@@ -35,13 +35,13 @@ logger = logging.getLogger(__name__)
 
 model = None
 MODEL_PATH = ROOT_DIR / 'yolov8n.pt'
-face_cascade = None
-eye_cascade = None
 
 WEAPON_CLASSES = {
     0: 'person',
     24: 'backpack',
     26: 'handbag',
+    43: 'knife',  # Add knife class if available
+    44: 'scissors',  # Scissors can be weapon-like
     67: 'cell phone'
 }
 
