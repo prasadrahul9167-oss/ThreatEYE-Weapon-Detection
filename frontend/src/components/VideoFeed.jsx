@@ -44,7 +44,6 @@ export default function VideoFeed({ isActive, setIsActive, onDetection, setFps }
     }
     setIsActive(false);
     setHasWeapon(false);
-    setSuspiciousPerson(false);
   };
 
   const captureFrame = () => {
