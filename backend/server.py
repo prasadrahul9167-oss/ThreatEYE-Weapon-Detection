@@ -49,6 +49,7 @@ class Detection(BaseModel):
     class_name: str
     confidence: float
     bbox: List[float]
+    attributes: Optional[List[str]] = []
 
 class DetectionResult(BaseModel):
     detections: List[Detection]
