@@ -157,6 +157,7 @@ async def detect_weapons(request: DetectionRequest):
         
         detections = []
         has_weapon = False
+        suspicious_person = False
         
         for result in results:
             boxes = result.boxes
@@ -170,11 +171,19 @@ async def detect_weapons(request: DetectionRequest):
                 weapon_keywords = ['knife', 'gun', 'pistol', 'rifle', 'weapon']
                 is_weapon = any(keyword in class_name.lower() for keyword in weapon_keywords)
                 
+                # Detect face attributes for persons
+                attributes = []
+                if cls_id == 0:  # Person class
+                    attributes = detect_face_attributes(img_array, [x1, y1, x2, y2])
+                    if any(attr in attributes for attr in ["FACE_COVERED", "SUNGLASSES", "PARTIAL_COVER"]):
+                        suspicious_person = True
+                
                 if cls_id in WEAPON_CLASSES or is_weapon or cls_id == 67:
                     detection = Detection(
                         class_name=class_name,
                         confidence=conf,
-                        bbox=[x1, y1, x2, y2]
+                        bbox=[x1, y1, x2, y2],
+                        attributes=attributes
                     )
                     detections.append(detection)
                     
@@ -184,7 +193,8 @@ async def detect_weapons(request: DetectionRequest):
         detection_doc = {
             'timestamp': datetime.now(timezone.utc).isoformat(),
             'detections': [d.model_dump() for d in detections],
-            'has_weapon': has_weapon
+            'has_weapon': has_weapon,
+            'suspicious_person': suspicious_person
         }
         await db.detections.insert_one(detection_doc)
         
