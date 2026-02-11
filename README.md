@@ -1,4 +1,4 @@
-# 🎯 SENTIENT EYE - Weapon Detection System
+# 🎯 ThreatEYE - Weapon Detection System
 
 A real-time weapon detection system powered by YOLOv8 that identifies guns, knives, and mobile phones through webcam feed with a modern tactical dashboard interface.
 

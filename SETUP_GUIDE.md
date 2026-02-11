@@ -1,4 +1,4 @@
-# 🚀 Quick Setup Guide - SENTIENT EYE
+# 🚀 Quick Setup Guide - ThreatEYE
 
 This is a simplified guide to get the weapon detection system running in minutes.
 
@@ -132,7 +132,7 @@ curl https://easy-weapon-scan.preview.emergentagent.com/api/stats
 
 ### Frontend ✅
 - [ ] Page loads without errors
-- [ ] Header shows "SENTIENT EYE"
+- [ ] Header shows "ThreatEYE"
 - [ ] Video feed area visible with corner brackets
 - [ ] START DETECTION button appears
 - [ ] Detection Log panel shows "No detections yet"

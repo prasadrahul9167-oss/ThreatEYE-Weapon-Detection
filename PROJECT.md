@@ -1,4 +1,4 @@
-# SENTIENT EYE - Weapon Detection System
+# ThreatEYE - Weapon Detection System
 ## Complete Project Documentation
 
 ---
@@ -22,7 +22,7 @@
 
 ## 🎯 Project Overview
 
-**SENTIENT EYE** is a real-time weapon detection system that uses computer vision and deep learning to identify potentially dangerous objects (guns, knives) and other items (mobile phones) through a webcam feed.
+**ThreatEYE** is a real-time weapon detection system that uses computer vision and deep learning to identify potentially dangerous objects (guns, knives) and other items (mobile phones) through a webcam feed.
 
 ### Key Objectives
 - Provide real-time object detection with minimal latency
