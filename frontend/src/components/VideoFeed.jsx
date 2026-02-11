@@ -117,10 +117,13 @@ export default function VideoFeed({ isActive, setIsActive, onDetection, setFps }
                        detection.class_name.toLowerCase().includes('weapon');
       
       const isPhone = detection.class_name.toLowerCase().includes('phone');
+      const isPerson = detection.class_name.toLowerCase().includes('person');
+      const hasSuspiciousAttributes = detection.attributes && detection.attributes.length > 0;
       
       let color = '#007AFF';
       if (isWeapon) color = '#FF3B30';
       else if (isPhone) color = '#FF9500';
+      else if (isPerson && hasSuspiciousAttributes) color = '#FFD700'; // Gold for suspicious persons
       
       ctx.strokeStyle = color;
       ctx.lineWidth = 3;
@@ -131,8 +134,19 @@ export default function VideoFeed({ isActive, setIsActive, onDetection, setFps }
       ctx.fillRect(x1, y1, width, height);
       ctx.globalAlpha = 1;
       
-      const label = `${detection.class_name} ${Math.round(detection.confidence * 100)}%`;
-      ctx.font = 'bold 16px JetBrains Mono';
+      // Build label with attributes
+      let label = `${detection.class_name} ${Math.round(detection.confidence * 100)}%`;
+      if (detection.attributes && detection.attributes.length > 0) {
+        const attrText = detection.attributes.map(attr => {
+          if (attr === 'FACE_COVERED') return 'Face Covered';
+          if (attr === 'SUNGLASSES') return 'Sunglasses';
+          if (attr === 'PARTIAL_COVER') return 'Partial Cover';
+          return attr;
+        }).join(', ');
+        label += ` [${attrText}]`;
+      }
+      
+      ctx.font = 'bold 14px JetBrains Mono';
       const textWidth = ctx.measureText(label).width;
       
       ctx.fillStyle = color;
