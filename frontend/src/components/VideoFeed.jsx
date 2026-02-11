@@ -173,18 +173,6 @@ export default function VideoFeed({ isActive, setIsActive, onDetection, setFps }
         </div>
       )}
       
-      {suspiciousPerson && !hasWeapon && (
-        <div 
-          className="absolute top-4 left-4 right-4 bg-yellow-500/20 border-2 border-yellow-500 p-4 rounded-sm flex items-center gap-3 z-10"
-          data-testid="suspicious-alert"
-        >
-          <AlertTriangle className="w-6 h-6 text-yellow-500" />
-          <span className="text-yellow-500 font-bold uppercase tracking-wide" style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
-            SUSPICIOUS PERSON DETECTED (Face Covered / Sunglasses)
-          </span>
-        </div>
-      )}
-      
       <div className="relative w-full h-full flex items-center justify-center">
         <video
           ref={videoRef}
