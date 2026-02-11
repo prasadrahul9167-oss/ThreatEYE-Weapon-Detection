@@ -54,7 +54,6 @@ class DetectionResult(BaseModel):
     detections: List[Detection]
     total_count: int
     has_weapon: bool
-    suspicious_person: bool
     timestamp: str
 
 class DetectionRequest(BaseModel):
