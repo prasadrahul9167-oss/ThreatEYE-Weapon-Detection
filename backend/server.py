@@ -99,11 +99,11 @@ async def detect_weapons(request: DetectionRequest):
         if img_array.shape[2] == 4:
             img_array = cv2.cvtColor(img_array, cv2.COLOR_RGBA2RGB)
         
-        results = model(img_array, conf=0.3, verbose=False)
+        # Use lower confidence for knife detection to catch more instances
+        results = model(img_array, conf=0.25, verbose=False)
         
         detections = []
         has_weapon = False
-        suspicious_person = False
         
         for result in results:
             boxes = result.boxes
@@ -114,22 +114,22 @@ async def detect_weapons(request: DetectionRequest):
                 
                 class_name = model.names[cls_id]
                 
-                weapon_keywords = ['knife', 'gun', 'pistol', 'rifle', 'weapon']
+                # Expanded weapon keywords for better detection
+                weapon_keywords = ['knife', 'gun', 'pistol', 'rifle', 'weapon', 'sword', 'blade', 'scissors']
                 is_weapon = any(keyword in class_name.lower() for keyword in weapon_keywords)
                 
-                # Detect face attributes for persons
-                attributes = []
-                if cls_id == 0:  # Person class
-                    attributes = detect_face_attributes(img_array, [x1, y1, x2, y2])
-                    if any(attr in attributes for attr in ["FACE_COVERED", "SUNGLASSES", "PARTIAL_COVER"]):
-                        suspicious_person = True
+                # Check if it's a knife class (class 43 in some COCO variations)
+                is_knife = cls_id == 43 or 'knife' in class_name.lower() or 'scissors' in class_name.lower()
+                
+                # For knife detection, accept lower confidence threshold
+                if is_knife and conf >= 0.2:
+                    is_weapon = True
                 
                 if cls_id in WEAPON_CLASSES or is_weapon or cls_id == 67:
                     detection = Detection(
                         class_name=class_name,
                         confidence=conf,
-                        bbox=[x1, y1, x2, y2],
-                        attributes=attributes
+                        bbox=[x1, y1, x2, y2]
                     )
                     detections.append(detection)
                     
@@ -139,8 +139,7 @@ async def detect_weapons(request: DetectionRequest):
         detection_doc = {
             'timestamp': datetime.now(timezone.utc).isoformat(),
             'detections': [d.model_dump() for d in detections],
-            'has_weapon': has_weapon,
-            'suspicious_person': suspicious_person
+            'has_weapon': has_weapon
         }
         await db.detections.insert_one(detection_doc)
         
@@ -148,7 +147,6 @@ async def detect_weapons(request: DetectionRequest):
             detections=detections,
             total_count=len(detections),
             has_weapon=has_weapon,
-            suspicious_person=suspicious_person,
             timestamp=detection_doc['timestamp']
         )
     
