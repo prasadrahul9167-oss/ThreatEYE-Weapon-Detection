@@ -16,6 +16,8 @@ from ultralytics import YOLO
 import base64
 import io
 from PIL import Image
+import requests
+import asyncio
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -67,6 +69,67 @@ class SystemStats(BaseModel):
     uptime: str
 
 app_start_time = datetime.now(timezone.utc)
+
+# Telegram configuration
+TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
+TELEGRAM_CHAT_ID = os.getenv('TELEGRAM_CHAT_ID')
+ALERT_PHONE_NUMBER = os.getenv('ALERT_PHONE_NUMBER', '9167937612')
+
+# Track last alert time to avoid spam
+last_alert_time = None
+ALERT_COOLDOWN = 10  # seconds between alerts
+
+async def send_telegram_alert(weapon_type: str, confidence: float, timestamp: str):
+    """Send Telegram notification when weapon is detected"""
+    global last_alert_time
+    
+    # Check cooldown to avoid spam
+    now = datetime.now(timezone.utc)
+    if last_alert_time:
+        time_diff = (now - last_alert_time).total_seconds()
+        if time_diff < ALERT_COOLDOWN:
+            logger.info(f"Alert cooldown active. Skipping notification.")
+            return
+    
+    if not TELEGRAM_BOT_TOKEN or not TELEGRAM_CHAT_ID:
+        logger.warning("Telegram credentials not configured")
+        return
+    
+    try:
+        message = f"""
+🚨 *WEAPON DETECTED ALERT* 🚨
+
+⚠️ *Type:* {weapon_type}
+📊 *Confidence:* {confidence}%
+📱 *Alert Number:* {ALERT_PHONE_NUMBER}
+⏰ *Time:* {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+🎯 *System:* ThreatEYE Detection System
+
+⚡ Immediate attention required!
+        """
+        
+        url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
+        payload = {
+            "chat_id": TELEGRAM_CHAT_ID,
+            "text": message,
+            "parse_mode": "Markdown"
+        }
+        
+        # Send asynchronously without blocking
+        loop = asyncio.get_event_loop()
+        response = await loop.run_in_executor(
+            None,
+            lambda: requests.post(url, json=payload, timeout=5)
+        )
+        
+        if response.status_code == 200:
+            logger.info(f"Telegram alert sent successfully for {weapon_type}")
+            last_alert_time = now
+        else:
+            logger.error(f"Telegram alert failed: {response.text}")
+            
+    except Exception as e:
+        logger.error(f"Error sending Telegram alert: {e}")
 
 def load_model():
     global model
@@ -135,6 +198,14 @@ async def detect_weapons(request: DetectionRequest):
                     
                     if is_weapon:
                         has_weapon = True
+                        # Send Telegram alert for weapon detection
+                        asyncio.create_task(
+                            send_telegram_alert(
+                                weapon_type=class_name,
+                                confidence=round(conf * 100, 1),
+                                timestamp=datetime.now(timezone.utc).isoformat()
+                            )
+                        )
         
         detection_doc = {
             'timestamp': datetime.now(timezone.utc).isoformat(),
@@ -201,6 +272,20 @@ async def get_recent_detections(limit: int = 10):
     except Exception as e:
         logger.error(f"Recent detections error: {e}")
         return {"detections": []}
+
+@api_router.post("/test-telegram")
+async def test_telegram_notification():
+    """Test endpoint to verify Telegram notifications work"""
+    try:
+        await send_telegram_alert(
+            weapon_type="TEST - System Check",
+            confidence=100.0,
+            timestamp=datetime.now(timezone.utc).isoformat()
+        )
+        return {"status": "success", "message": "Test notification sent to Telegram"}
+    except Exception as e:
+        logger.error(f"Test notification error: {e}")
+        return {"status": "error", "message": str(e)}
 
 app.include_router(api_router)
 
