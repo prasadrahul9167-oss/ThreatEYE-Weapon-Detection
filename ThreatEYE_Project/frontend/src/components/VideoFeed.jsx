@@ -114,7 +114,10 @@ export default function VideoFeed({ isActive, setIsActive, onDetection, setFps }
       const isWeapon = detection.class_name.toLowerCase().includes('knife') ||
                        detection.class_name.toLowerCase().includes('gun') ||
                        detection.class_name.toLowerCase().includes('pistol') ||
-                       detection.class_name.toLowerCase().includes('weapon');
+                       detection.class_name.toLowerCase().includes('rifle') ||
+                       detection.class_name.toLowerCase().includes('weapon') ||
+                       detection.class_name.toLowerCase().includes('scissors') ||
+                       detection.class_name.toLowerCase().includes('blade');
       
       const isPhone = detection.class_name.toLowerCase().includes('phone');
       
@@ -131,7 +134,9 @@ export default function VideoFeed({ isActive, setIsActive, onDetection, setFps }
       ctx.fillRect(x1, y1, width, height);
       ctx.globalAlpha = 1;
       
+      // Build label
       const label = `${detection.class_name} ${Math.round(detection.confidence * 100)}%`;
+      
       ctx.font = 'bold 16px JetBrains Mono';
       const textWidth = ctx.measureText(label).width;
       
